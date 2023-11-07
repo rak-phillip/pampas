@@ -29,20 +29,51 @@ defineProps<{
           border-none
           font-normal
         "
-        @click="header.column.getToggleSortingHandler()?.($event)"
       >
-        <template v-if="!header.isPlaceholder">
+        <span 
+          v-if="!header.isPlaceholder"
+          class="
+            group
+            flex
+            items-center
+            gap-2
+            w-fit
+            cursor-pointer
+            select-none
+            dark:hover:text-neutral-100
+          "
+          @click="header.column.getToggleSortingHandler()?.($event)"
+        >
           <FlexRender
             :render="header.column.columnDef.header"
             :props="header.getContext()"
           />
 
-          {{
-            { asc: ' 🔼', desc: ' 🔽' }[
-              header.column.getIsSorted() as string
-            ]
-          }}
-        </template>
+          <font-awesome-icon
+            v-if="header.column.getCanSort() && !header.column.getIsSorted()"
+            :icon="['fas', 'sort']"
+            class="
+              dark:text-neutral-700
+              dark:group-hover:text-neutral-100
+            "
+          />
+          <font-awesome-icon
+            v-if="header.column.getIsSorted() === 'asc'"
+            :icon="['fas', 'sort-up']"
+            class="
+              dark:text-neutral-200
+              dark:group-hover:text-neutral-100
+            "
+          />
+          <font-awesome-icon
+            v-if="header.column.getIsSorted() === 'desc'"
+            :icon="['fas', 'sort-down']"
+            class="
+              dark:text-neutral-200
+              dark:group-hover:text-neutral-100
+            "
+          />
+        </span>
       </th>
     </tr>
   </thead>
