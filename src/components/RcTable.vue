@@ -131,50 +131,67 @@ const table = useVueTable({
   <div>
     <input v-model="globalFilter">
   </div>
-  <table>
-    <thead>
-      <tr
-        v-for="headerGroup in table.getHeaderGroups()"
-        :key="headerGroup.id"
-      >
-        <th
-          v-for="header in headerGroup.headers"
-          :key="header.id"
-          :colSpan="header.colSpan"
-          @click="header.column.getToggleSortingHandler()?.($event)"
+  <div
+    class="
+      rounded 
+      overflow-hidden 
+      border 
+      dark:border-stone-300 
+      w-fit
+    "
+  >
+    <table 
+      class="
+        dark:bg-stone-800
+        dark:text-stone-200
+        border-collapse 
+        border-none
+      "
+    >
+      <thead>
+        <tr
+          v-for="headerGroup in table.getHeaderGroups()"
+          :key="headerGroup.id"
         >
-          <template v-if="!header.isPlaceholder">
-            <FlexRender
-              :render="header.column.columnDef.header"
-              :props="header.getContext()"
-            />
+          <th
+            v-for="header in headerGroup.headers"
+            :key="header.id"
+            :colSpan="header.colSpan"
+            @click="header.column.getToggleSortingHandler()?.($event)"
+          >
+            <template v-if="!header.isPlaceholder">
+              <FlexRender
+                :render="header.column.columnDef.header"
+                :props="header.getContext()"
+              />
 
-            {{
-              { asc: ' 🔼', desc: ' 🔽' }[
-                header.column.getIsSorted() as string
-              ]
-            }}
-          </template>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="row in table.getRowModel().rows"
-        :key="row.id"
-      >
-        <td
-          v-for="cell in row.getVisibleCells()"
-          :key="cell.id"
+              {{
+                { asc: ' 🔼', desc: ' 🔽' }[
+                  header.column.getIsSorted() as string
+                ]
+              }}
+            </template>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="row in table.getRowModel().rows"
+          :key="row.id"
         >
-          <FlexRender
-            :render="cell.column.columnDef.cell"
-            :props="cell.getContext()"
-          />
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          <td
+            v-for="cell in row.getVisibleCells()"
+            :key="cell.id"
+          >
+            <FlexRender
+              :render="cell.column.columnDef.cell"
+              :props="cell.getContext()"
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <style>
