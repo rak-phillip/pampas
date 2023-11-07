@@ -9,6 +9,7 @@ import {
 } from '@tanstack/vue-table';
 import type { SortingFnOption, SortingState } from '@tanstack/vue-table';
 import { ref, toRefs } from 'vue';
+import RcTableHeader from './RcTableHeader.vue';
 
 type TableColumns = {
   [key: string]: {
@@ -57,7 +58,7 @@ const actionColumn = hasRowAction.value
     {
       id: 'action',
       cell: () => {
-        return <div>🪬</div>;
+        return <div class="w-10">🪬</div>;
       },
     },
   ] :
@@ -148,32 +149,7 @@ const table = useVueTable({
         border-none
       "
     >
-      <thead>
-        <tr
-          v-for="headerGroup in table.getHeaderGroups()"
-          :key="headerGroup.id"
-        >
-          <th
-            v-for="header in headerGroup.headers"
-            :key="header.id"
-            :colSpan="header.colSpan"
-            @click="header.column.getToggleSortingHandler()?.($event)"
-          >
-            <template v-if="!header.isPlaceholder">
-              <FlexRender
-                :render="header.column.columnDef.header"
-                :props="header.getContext()"
-              />
-
-              {{
-                { asc: ' 🔼', desc: ' 🔽' }[
-                  header.column.getIsSorted() as string
-                ]
-              }}
-            </template>
-          </th>
-        </tr>
-      </thead>
+      <rc-table-header :header-groups="table.getHeaderGroups()" />
       <tbody>
         <tr
           v-for="row in table.getRowModel().rows"
