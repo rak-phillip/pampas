@@ -6,9 +6,9 @@ import {
   createColumnHelper,
   getSortedRowModel,
   getFilteredRowModel,
-} from '@tanstack/vue-table'
+} from '@tanstack/vue-table';
 import type { SortingFnOption, SortingState } from '@tanstack/vue-table';
-import { ref, toRefs } from 'vue'
+import { ref, toRefs } from 'vue';
 
 type TableColumns = {
   [key: string]: {
@@ -19,15 +19,15 @@ type TableColumns = {
 }
 
 const props = defineProps<{
-  tableData: any[]
-  tableColumns: TableColumns
-  hasRowSelection?: boolean
-  hasRowAction?: boolean
-}>()
+  tableData: any[],
+  tableColumns: TableColumns,
+  hasRowSelection?: boolean,
+  hasRowAction?: boolean,
+}>();
 
-const { tableData, tableColumns, hasRowSelection, hasRowAction } = toRefs(props)
+const { tableData, tableColumns, hasRowSelection, hasRowAction } = toRefs(props);
 
-const columnHelper = createColumnHelper<typeof tableData.value>()
+const columnHelper = createColumnHelper<typeof tableData.value>();
 
 const selectColumn = hasRowSelection.value
   ? [
@@ -38,7 +38,7 @@ const selectColumn = hasRowSelection.value
           type='checkbox'
           checked={table.getIsAllRowsSelected()}
           onChange={table.getToggleAllRowsSelectedHandler()}
-        ></input>
+        ></input>;
       },
       cell: ({ row }: { row: any }) => {
         return <input
@@ -46,22 +46,22 @@ const selectColumn = hasRowSelection.value
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}
           onChange={row.getToggleSelectedHandler()}
-        ></input>
-      }
-    }
+        ></input>;
+      },
+    },
   ]
-  : []
+  : [];
 
 const actionColumn = hasRowAction.value
   ? [
     {
       id: 'action',
       cell: () => {
-        return <div>🪬</div>
-      }
-    }
+        return <div>🪬</div>;
+      },
+    },
   ] :
-  []
+  [];
 
 const providedColumns = Object.entries(tableColumns.value)
   .map(([key, val]) => {
@@ -70,74 +70,84 @@ const providedColumns = Object.entries(tableColumns.value)
         header: val.header,
         enableSorting: val.enableSorting || false,
       }),
-      ...(val.sortingFn ? { sortingFn: val.sortingFn } : {})
-    }
-  })
+      ...(val.sortingFn ? { sortingFn: val.sortingFn } : {}),
+    };
+  });
 
-const columns = [...selectColumn, ...providedColumns, ...actionColumn]
+const columns = [...selectColumn, ...providedColumns, ...actionColumn];
 
-const data = ref(tableData.value)
+const data = ref(tableData.value);
 
-const sorting = ref<SortingState>([])
+const sorting = ref<SortingState>([]);
 
 const rowSelection = ref({});
-const globalFilter = ref('')
+const globalFilter = ref('');
 
 const table = useVueTable({
   get data() {
-    return data.value
+    return data.value;
   },
   columns,
   state: {
     get sorting() {
-      return sorting.value
+      return sorting.value;
     },
     get rowSelection() {
-      return rowSelection.value
+      return rowSelection.value;
     },
     get globalFilter() {
-      console.debug
-      return globalFilter.value
-    }
+      console.debug;
+      return globalFilter.value;
+    },
   },
   enableRowSelection: true,
   onRowSelectionChange: updateOrValue => {
     rowSelection.value =
       typeof updateOrValue === 'function'
         ? updateOrValue(rowSelection.value)
-        : updateOrValue
+        : updateOrValue;
   },
   onSortingChange: updateOrValue => {
     sorting.value =
       typeof updateOrValue === 'function'
         ? updateOrValue(sorting.value)
-        : updateOrValue
+        : updateOrValue;
   },
   enableGlobalFilter: true,
   onGlobalFilterChange: updateOrValue => {
     globalFilter.value =
       typeof updateOrValue === 'function'
         ? updateOrValue(globalFilter.value)
-        : updateOrValue
+        : updateOrValue;
   },
   globalFilterFn: "auto",
   getCoreRowModel: getCoreRowModel(),
   getSortedRowModel: getSortedRowModel(),
   getFilteredRowModel: getFilteredRowModel(),
-})
+});
 </script>
 
 <template>
   <div>
-    <input v-model="globalFilter" />
+    <input v-model="globalFilter">
   </div>
   <table>
     <thead>
-      <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-        <th v-for="header in headerGroup.headers" :key="header.id" :colSpan="header.colSpan"
-          @click="header.column.getToggleSortingHandler()?.($event)">
+      <tr
+        v-for="headerGroup in table.getHeaderGroups()"
+        :key="headerGroup.id"
+      >
+        <th
+          v-for="header in headerGroup.headers"
+          :key="header.id"
+          :colSpan="header.colSpan"
+          @click="header.column.getToggleSortingHandler()?.($event)"
+        >
           <template v-if="!header.isPlaceholder">
-            <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
+            <FlexRender
+              :render="header.column.columnDef.header"
+              :props="header.getContext()"
+            />
 
             {{
               { asc: ' 🔼', desc: ' 🔽' }[
@@ -149,9 +159,18 @@ const table = useVueTable({
       </tr>
     </thead>
     <tbody>
-      <tr v-for="row in table.getRowModel().rows" :key="row.id">
-        <td v-for="cell in row.getVisibleCells()" :key="cell.id">
-          <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+      <tr
+        v-for="row in table.getRowModel().rows"
+        :key="row.id"
+      >
+        <td
+          v-for="cell in row.getVisibleCells()"
+          :key="cell.id"
+        >
+          <FlexRender
+            :render="cell.column.columnDef.cell"
+            :props="cell.getContext()"
+          />
         </td>
       </tr>
     </tbody>
