@@ -1,6 +1,5 @@
 <script setup lang="tsx">
 import {
-  FlexRender,
   getCoreRowModel,
   useVueTable,
   createColumnHelper,
@@ -10,6 +9,7 @@ import {
 import type { SortingFnOption, SortingState } from '@tanstack/vue-table';
 import { ref, toRefs } from 'vue';
 import RcTableHeader from './RcTableHeader.vue';
+import RcTableBody from './RcTableBody.vue';
 
 type TableColumns = {
   [key: string]: {
@@ -57,8 +57,11 @@ const actionColumn = hasRowAction.value
   ? [
     {
       id: 'action',
+      header: () => {
+        return <div class="w-10"></div>;
+      },
       cell: () => {
-        return <div class="w-10">🪬</div>;
+        return <div class="flex justify-center">🪬</div>;
       },
     },
   ] :
@@ -137,65 +140,20 @@ const table = useVueTable({
       rounded 
       overflow-hidden 
       border 
-      dark:border-stone-300 
+      dark:border-neutral-500 
       w-fit
     "
   >
     <table 
       class="
-        dark:bg-stone-800
-        dark:text-stone-200
+        dark:bg-neutral-800
+        dark:text-neutral-200
         border-collapse 
         border-none
       "
     >
       <rc-table-header :header-groups="table.getHeaderGroups()" />
-      <tbody>
-        <tr
-          v-for="row in table.getRowModel().rows"
-          :key="row.id"
-        >
-          <td
-            v-for="cell in row.getVisibleCells()"
-            :key="cell.id"
-          >
-            <FlexRender
-              :render="cell.column.columnDef.cell"
-              :props="cell.getContext()"
-            />
-          </td>
-        </tr>
-      </tbody>
+      <rc-table-body :rows="table.getRowModel().rows" />
     </table>
   </div>
 </template>
-
-<style>
-html {
-  font-family: sans-serif;
-  font-size: 14px;
-}
-
-table {
-  border: 1px solid lightgray;
-}
-
-tbody {
-  border-bottom: 1px solid lightgray;
-}
-
-th {
-  border-bottom: 1px solid lightgray;
-  border-right: 1px solid lightgray;
-  padding: 2px 4px;
-}
-
-tfoot {
-  color: gray;
-}
-
-tfoot th {
-  font-weight: normal;
-}
-</style>
-

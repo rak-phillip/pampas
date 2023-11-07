@@ -13,9 +13,9 @@ defineProps<{
       v-for="headerGroup in headerGroups"
       :key="headerGroup.id"
       class="
-        dark:bg-stone-900
+        dark:bg-neutral-900
         border-b
-        dark:border-b-stone-300 
+        dark:border-neutral-500 
         text-left
       "
     >
