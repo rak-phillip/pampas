@@ -10,6 +10,7 @@ import type { SortingFnOption, SortingState } from '@tanstack/vue-table';
 import { ref, toRefs } from 'vue';
 import RcTableHeader from './RcTableHeader.vue';
 import RcTableBody from './RcTableBody.vue';
+import RcCheckbox from './RcCheckbox.vue';
 
 type TableColumns = {
   [key: string]: {
@@ -35,19 +36,18 @@ const selectColumn = hasRowSelection.value
     {
       id: 'select',
       header: ({ table }: { table: any }) => {
-        return <input
-          type='checkbox'
+        return <RcCheckbox
           checked={table.getIsAllRowsSelected()}
+          indeterminate={table.getIsSomeRowsSelected()}
           onChange={table.getToggleAllRowsSelectedHandler()}
-        ></input>;
+        ></RcCheckbox>;
       },
       cell: ({ row }: { row: any }) => {
-        return <input
-          type='checkbox'
+        return <RcCheckbox
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}
           onChange={row.getToggleSelectedHandler()}
-        ></input>;
+        ></RcCheckbox>;
       },
     },
   ]
