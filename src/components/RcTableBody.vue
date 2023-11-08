@@ -1,13 +1,63 @@
 <script setup lang="ts">
 import { FlexRender } from '@tanstack/vue-table';
-import type { Row } from '@tanstack/vue-table';
-import { toRefs } from 'vue';
+import type { Cell, ColumnPinningState, Row } from '@tanstack/vue-table';
+import { split } from 'postcss/lib/list';
+import { ref, toRefs } from 'vue';
 
 const props = defineProps < {
- rows: Row<any[]>[] 
+  rows: Row<any[]>[],
+  pinnedColumns: ColumnPinningState,
 }>();
 
-const { rows } = toRefs(props);
+const { rows, pinnedColumns } = toRefs(props);
+
+const elementsToMeasure = ref(null);
+
+const tdClass = (cell: Cell<any, unknown>) => {
+  const base = {
+    'py-3': true,
+    'px-2': true,
+    'border-none': true,
+    'font-normal': true,
+    'dark:bg-neutral-900': true,
+    'z-20': true,
+  };
+
+  if (cell.column.getIsPinned()) {
+    return {
+      ...base,
+      'sticky': true,
+      'left-0': true,
+    };
+  }
+
+  return base;
+};
+
+const stickyOffset = (cell: Cell<any, unknown>) => {
+  if (cell.column.getIsPinned()) {
+    const all = elementsToMeasure.value;
+    let offsetLeft = null;
+
+    if (all) {
+      const key = cell.id.split('_')[0];
+      const elementIndex = pinnedColumns.value.left?.findIndex(x => `${key}_${x}` === cell.id);
+
+      if (typeof elementIndex === 'undefined') {
+        return { };
+      }
+
+      if (elementIndex >= 1) {
+        const offsetElement = (all as any[]).find(x => x.__vnode.key === `${key}_${pinnedColumns.value.left?.[elementIndex - 1]}`);
+        offsetLeft = offsetElement.getBoundingClientRect().left + offsetElement.getBoundingClientRect().width;
+        return { left: `${offsetLeft - 1}px` };
+      } else {
+        return { left: 0 };
+      }
+    }
+  }
+  return { };
+};
 </script>
 
 <template>
@@ -23,13 +73,10 @@ const { rows } = toRefs(props);
     >
       <td
         v-for="cell in row.getVisibleCells()"
+        ref="elementsToMeasure"
         :key="cell.id"
-        class="
-          py-3
-          px-2
-          border-none
-          font-normal
-        "
+        :class="tdClass(cell)"
+        :style="stickyOffset(cell)"
       >
         <FlexRender
           :render="cell.column.columnDef.cell"

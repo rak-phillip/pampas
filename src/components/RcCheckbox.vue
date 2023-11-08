@@ -47,7 +47,7 @@ onMounted(() => {
         :icon="['fas', 'circle']"
         class="
           dark:text-sky-50
-          fa-sm
+          fa-xs
         "
       />
       <font-awesome-icon

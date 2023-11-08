@@ -6,7 +6,7 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
 } from '@tanstack/vue-table';
-import type { SortingFnOption, SortingState } from '@tanstack/vue-table';
+import type { ColumnPinningState, SortingFnOption, SortingState } from '@tanstack/vue-table';
 import { ref, toRefs } from 'vue';
 import RcTableHeader from './RcTableHeader.vue';
 import RcTableBody from './RcTableBody.vue';
@@ -49,6 +49,7 @@ const selectColumn = hasRowSelection.value
           onChange={row.getToggleSelectedHandler()}
         ></RcCheckbox>;
       },
+      enablePinning: false,
     },
   ]
   : [];
@@ -63,6 +64,7 @@ const actionColumn = hasRowAction.value
       cell: () => {
         return <div class="flex justify-center">🪬</div>;
       },
+      enablePinning: false,
     },
   ] :
   [];
@@ -87,6 +89,8 @@ const sorting = ref<SortingState>([]);
 const rowSelection = ref({});
 const globalFilter = ref('');
 
+const columnPinning = ref<ColumnPinningState>({ left: ['select'] });
+
 const table = useVueTable({
   get data() {
     return data.value;
@@ -100,8 +104,10 @@ const table = useVueTable({
       return rowSelection.value;
     },
     get globalFilter() {
-      console.debug;
       return globalFilter.value;
+    },
+    get columnPinning() {
+      return columnPinning.value;
     },
   },
   enableRowSelection: true,
@@ -124,6 +130,12 @@ const table = useVueTable({
         ? updateOrValue(globalFilter.value)
         : updateOrValue;
   },
+  onColumnPinningChange: updateOrValue => {
+    columnPinning.value =
+      typeof updateOrValue === 'function'
+        ? updateOrValue(columnPinning.value)
+        : updateOrValue;
+  },
   globalFilterFn: "auto",
   getCoreRowModel: getCoreRowModel(),
   getSortedRowModel: getSortedRowModel(),
@@ -138,10 +150,11 @@ const table = useVueTable({
   <div
     class="
       rounded 
-      overflow-hidden 
+      overflow-auto
       border 
       dark:border-neutral-500 
-      w-fit
+      w-96
+      h-96
     "
   >
     <table 
@@ -152,8 +165,15 @@ const table = useVueTable({
         border-none
       "
     >
-      <rc-table-header :header-groups="table.getHeaderGroups()" />
-      <rc-table-body :rows="table.getRowModel().rows" />
+      <rc-table-header
+        :header-groups="table.getHeaderGroups()"
+        :pinned-columns="columnPinning"
+      />
+      <rc-table-body
+        :rows="table.getRowModel().rows" 
+        :pinned-columns="columnPinning"
+      />
     </table>
   </div>
+  {{ columnPinning }}
 </template>
