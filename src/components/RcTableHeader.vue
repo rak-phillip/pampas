@@ -78,21 +78,31 @@ const stickyOffset = (header: Header<any, unknown>) => {
         <span 
           v-if="!header.isPlaceholder"
           class="
-            group
             flex
             items-center
             gap-2
             w-fit
             cursor-pointer
             select-none
-            dark:hover:text-neutral-100
           "
         >
+          <template v-if="header.column.getCanPin()">
+            <font-awesome-icon
+              :icon="['fas', 'arrow-right-to-bracket']"
+              class="
+                rotate-180
+                z-0
+              "
+              @click="header.column.pin('left')"
+            />
+          </template>
           <span
             class="
+              group
               flex
               items-center
               gap-2
+              dark:hover:text-neutral-100
             "
             @click="header.column.getToggleSortingHandler()?.($event)"
           >
@@ -106,39 +116,28 @@ const stickyOffset = (header: Header<any, unknown>) => {
                 v-if="!header.column.getIsSorted()"
                 :icon="['fas', 'sort']"
                 class="
-              dark:text-neutral-700
-              dark:group-hover:text-neutral-100
-            "
+                  dark:text-neutral-700
+                  dark:group-hover:text-neutral-100
+                "
               />
               <font-awesome-icon
                 v-if="header.column.getIsSorted() === 'asc'"
                 :icon="['fas', 'sort-up']"
                 class="
-              dark:text-neutral-200
-              dark:group-hover:text-neutral-100
-            "
+                  dark:text-neutral-200
+                  dark:group-hover:text-neutral-100
+                "
               />
               <font-awesome-icon
                 v-if="header.column.getIsSorted() === 'desc'"
                 :icon="['fas', 'sort-down']"
                 class="
-              dark:text-neutral-200
-              dark:group-hover:text-neutral-100
-            "
+                  dark:text-neutral-200
+                  dark:group-hover:text-neutral-100
+                "
               />
             </template>
           </span>
-
-          <template v-if="header.column.getCanPin()">
-            <font-awesome-icon
-              :icon="['fas', 'arrow-right-to-bracket']"
-              class="
-                rotate-180
-                z-0
-              "
-              @click="header.column.pin('left')"
-            />
-          </template>
         </span>
       </th>
     </tr>

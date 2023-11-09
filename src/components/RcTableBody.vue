@@ -17,9 +17,9 @@ const tdClass = (cell: Cell<any, unknown>) => {
   const base = {
     'py-3': true,
     'px-2': true,
-    'border-none': true,
+    'dark:bg-neutral-800': true,
+    'bg-clip-padding': true,
     'font-normal': true,
-    'dark:bg-neutral-900': true,
     'z-20': true,
   };
 
